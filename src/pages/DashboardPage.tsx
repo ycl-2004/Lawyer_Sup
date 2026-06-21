@@ -48,6 +48,7 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const [liveMatters, setLiveMatters] = useState<Matter[]>([]);
   const [backendUp, setBackendUp] = useState(false);
+  const [checked, setChecked] = useState(false); // 后端探测是否已完成（避免初次加载闪现横幅）
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -61,7 +62,8 @@ export function DashboardPage() {
         setLiveMatters(ms);
         setBackendUp(true);
       })
-      .catch(() => alive && setBackendUp(false));
+      .catch(() => alive && setBackendUp(false))
+      .finally(() => alive && setChecked(true));
     return () => {
       alive = false;
     };
@@ -132,6 +134,17 @@ export function DashboardPage() {
           <Plus size={16} /> 新建案件
         </button>
       </div>
+
+      {checked && !backendUp && (
+        <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/60 px-4 py-3 text-sm leading-relaxed text-slate-700">
+          🌐 <span className="font-medium">在线演示版（GitHub Pages）</span>：下方两个
+          <span className="font-medium">演示案件</span>可直接体验全部「不许猜」红线——
+          计算缺输入即拒绝、引用反幻觉核对、复核确认门槛、带水印导出，全部在浏览器本地运行、无需后端。
+          <span className="text-slate-500">
+            　「实时案件」的真实文件上传与本地持久化需运行后端（见 README），在线演示版不提供。
+          </span>
+        </div>
+      )}
 
       {showCreate && (
         <div className="mt-4 rounded-xl border border-blue-200 bg-white p-4">
