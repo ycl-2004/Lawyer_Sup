@@ -30,8 +30,9 @@ uvicorn app.main:app --reload --port 8000
 pytest                            # 后端测试
 ```
 
-后端默认 mock 模式（规则抽取，离线可用）；配置 DeepSeek 环境变量（见 backend/README.md）
-后抽取自动升级为「规则 + LLM 增强（引用逐字校验）」。
+后端默认 mock 模式（规则抽取，离线可用）；复制 `backend/.env.example` → `backend/.env`
+配置 DeepSeek 环境变量后，抽取自动升级为「规则 + LLM 增强（引用逐字校验）」。
+前端可选 `.env.example` → `.env.local` 配置 `VITE_API_BASE`。
 
 ## 演示路径建议
 
@@ -66,11 +67,42 @@ pytest                            # 后端测试
   `POST /api/matters/{id}/workflows/run` 展示真实节点输出（含 RAG 检索节点），
   后端未启动时自动回退本地模拟并明确标注；`VITE_API_BASE` 可配后端地址
 
-## 仍为模拟
+## 已落地（Phase 2–3）
 
-真实文件解析/OCR、LLM 分类与抽取的前端接入、工作区数据与后端同步、持久化、登录权限。
-RAG 语料为人工整理演示样例（正式引用须核对官方文本），向量通道为 TF-IDF 轻量实现，
-接 BGE-M3/Qwen embedding 的接口已留好（`backend/app/rag/store.py` 顶部说明）。
+真实文件上传解析（PDF/docx/txt + 编码兜底 + 粘贴文本兜底）、规则抽取、工作区数据与后端同步、
+SQLite 本地持久化（14 天 TTL）、单地址运行均**已实现并端到端验证**（见 `PROJECT_STATUS.md`）。
+测试由前端 22 / 后端 14 增至 **前端 41 / 后端 50**，新增抽取评估集、语料一致性校验与 CI。
+
+## 仍为模拟 / 未做
+
+- **OCR**：扫描件/图片无文本层时不自动识别（v1 范围外），引导手动粘贴。
+- **LLM 抽取质量**：接线就绪（`LLM_PROVIDER=deepseek` 启用），但真实抽取质量**未经评估**；
+  离线评估仅覆盖确定性规则层（`docs/eval/`）。
+- **RAG 语料**：人工整理演示样例，**正式引用须核对官方文本**（`docs/legal/corpus_verification.md`）；
+  向量通道为 TF-IDF 轻量实现，接 BGE-M3/Qwen embedding 的接口已留好。
+- **登录/权限/多用户、传输与存储加密**：未做；接真实客户材料前为硬性前置条件。
+
+## 测试与质量
+
+```bash
+npm test            # 前端 vitest：计算服务 + 复核门槛 + 组件（41 项，jsdom）
+npm run build       # tsc --noEmit 类型检查 + 生产构建
+cd backend && pytest                  # 后端 50 项：单测 + 边界 + API + 评估护栏 + 语料一致性
+python -m app.eval.run_eval           # 抽取评估报告（召回84%/精确100%/编造0/引用有效100%）
+python -m app.rag.verify_corpus       # 前后端语料逐字一致性校验
+```
+
+CI（GitHub Actions，`.github/workflows/ci.yml`）：前端 typecheck+build+vitest，
+后端 pytest+评估+语料校验，双侧守护 TS/Python 计算一致性。
+
+## 文档
+
+- [PROJECT_STATUS.md](./PROJECT_STATUS.md) — 现状评估、风险、完成路线图（每次变更后更新）
+- [docs/architecture.md](./docs/architecture.md) — 架构图（数据流 + 分层 + 风控护栏）
+- [docs/FAQ.md](./docs/FAQ.md) — 复现排错（版本/镜像源/端口/上传/导出）
+- [docs/eval/extraction_eval_report.md](./docs/eval/extraction_eval_report.md) — 抽取评估报告
+- [docs/legal/corpus_verification.md](./docs/legal/corpus_verification.md) — 法条官方核对追踪表
+- [CHANGELOG.md](./CHANGELOG.md) — 更新日志
 
 ## 目录
 
@@ -83,8 +115,12 @@ src/        前端（React + Vite + TS + Tailwind）
 backend/    FastAPI 骨架（mock/DeepSeek 双模式，pytest 测试）
 ```
 
-## 下一步（MVP-2）
+## 下一步
 
-工作区数据与后端工作流输出全量同步（SSE 流式节点状态）；文件上传走后端真实解析；
-接入 DeepSeek 真实抽取（设 LLM_API_KEY 即可）；BGE-M3 稠密向量替换 TF-IDF 通道；
-扩充语料（实施条例、地方口径）与评估数据集（5 个标注案件）。
+已完成：真实上传解析、持久化、前后端同步、抽取评估集、CI、语料一致性校验。
+仍待办（见 `PROJECT_STATUS.md` 路线图）：
+- DeepSeek 真实抽取的**质量评估**（prompt + 校验 + 标注集扩到含 LLM 层）。
+- 法条文本**逐条官方核对**（追踪表已就绪，待人工对照）。
+- BGE-M3 稠密向量替换 TF-IDF 通道；语料扩充（实施条例、地方口径）。
+- 工作流 SSE 流式节点状态；人工编辑（时间线/请求项增删）回写后端。
+- 接真实材料前的合规前置：脱敏后移、加密、鉴权、审计。
