@@ -1,6 +1,7 @@
 # LawDesk Junior · 初级律师工作台 Agent（MVP-1）
 
-> 项目状态、风险评估与完成路线图见 [PROJECT_STATUS.md](./PROJECT_STATUS.md)（每次重大变更后更新）。
+> [English README](./README.en.md) ｜ 项目状态、风险评估与完成路线图见 [PROJECT_STATUS.md](./PROJECT_STATUS.md)（每次重大变更后更新）。
+> 作品集页与技术文章见 [docs/showcase/](./docs/showcase/project_page.md)。
 
 劳动争议仲裁材料包生成的**律师内部辅助工作台**演示版。
 
