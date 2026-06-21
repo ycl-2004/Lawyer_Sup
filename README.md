@@ -1,6 +1,10 @@
 # LawDesk Junior · 初级律师工作台 Agent（MVP-1）
 
-> [English README](./README.en.md) ｜ 项目状态、风险评估与完成路线图见 [PROJECT_STATUS.md](./PROJECT_STATUS.md)（每次重大变更后更新）。
+> 🌐 **在线演示**：https://ycl-2004.github.io/Lawyer_Sup/ —— 演示案件（张某/刘某）可直接体验
+> 全部「不许猜」红线（计算拒绝、引用反幻觉、复核门槛、带水印导出），纯浏览器运行。
+> 实时文件上传与持久化需本地后端（见下方运行说明）。
+>
+> [English README](./README.en.md) ｜ 项目状态与完成路线图见 [PROJECT_STATUS.md](./PROJECT_STATUS.md)。
 > 作品集页与技术文章见 [docs/showcase/](./docs/showcase/project_page.md)。
 
 劳动争议仲裁材料包生成的**律师内部辅助工作台**演示版。

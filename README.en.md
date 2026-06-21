@@ -1,5 +1,9 @@
 # LawDesk Junior · Labor-Dispute Arbitration Workbench (MVP)
 
+> 🌐 **Live demo**: https://ycl-2004.github.io/Lawyer_Sup/ — the demo cases run the full
+> "no-guessing" red-line flow (calc refusal, anti-hallucination citation check, review gate,
+> watermarked export) entirely in-browser. Real file upload + persistence need the local backend.
+
 [中文 README](./README.md) ｜ Internal assistive tool for junior lawyers — turns messy
 labor-dispute materials into **sourced, reviewable, never-fabricated** arbitration draft documents.
 
