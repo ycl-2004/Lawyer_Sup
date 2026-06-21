@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply text-slate-800 antialiased;
+  }
+  body {
+    @apply bg-slate-100 font-sans text-sm;
+  }
+  /* 键盘导航可见焦点（可访问性 checklist） */
+  :focus-visible {
+    @apply outline-none ring-2 ring-blue-500/60 ring-offset-1;
+  }
+  button:not(:disabled),
+  select,
+  [role="button"] {
+    cursor: pointer;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

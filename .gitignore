@@ -1,0 +1,22 @@
+# 依赖与构建产物
+node_modules
+dist
+*.log
+
+# Python
+backend/.venv
+.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 本地数据（实时案件 SQLite + 上传原件，含潜在敏感信息，绝不入库）
+backend/data/
+
+# 环境变量（密钥）——只提交 .env.example
+.env
+.env.local
+backend/.env
+
+# 系统
+.DS_Store

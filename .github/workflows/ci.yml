@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend:
+    name: Frontend (typecheck · build · vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run build   # tsc --noEmit + vite build（含测试文件类型检查）
+      - run: npm test        # vitest（lib + 组件，jsdom）
+
+  backend:
+    name: Backend (pytest · eval · corpus verify)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q            # 单测 + 边界 + API + 评估护栏 + 语料一致性
+      - run: python -m app.eval.run_eval    # 生成抽取评估报告（含反幻觉硬指标）
+      - run: python -m app.rag.verify_corpus # 前后端语料一致性校验

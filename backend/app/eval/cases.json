@@ -1,0 +1,94 @@
+{
+  "_meta": {
+    "purpose": "规则抽取器（确定性、离线）标注评估集。全部为虚构数据。",
+    "note": "expected 为人工标注的真值（该字段在材料中客观存在的值）。规则未覆盖的表述会被计为 miss（召回损失），用于诚实记录规则层能力边界；LLM 增强层未在此离线评估。",
+    "fields": ["employee_name", "employer_name", "start_date", "monthly_salary", "termination_date", "termination_reason", "contract_signed"]
+  },
+  "cases": [
+    {
+      "id": "eval_01_contract_standard",
+      "filename": "labor_contract.txt",
+      "text": "劳动合同\n甲方：广州天河餐饮管理有限公司\n乙方：李某\n合同期限自2022年5月1日起至2025年4月30日止。\n月工资人民币8,000元。",
+      "expected": {
+        "employee_name": "李某",
+        "employer_name": "广州天河餐饮管理有限公司",
+        "start_date": "2022-05-01",
+        "monthly_salary": "8000元",
+        "contract_signed": "是（材料含书面合同）"
+      }
+    },
+    {
+      "id": "eval_02_termination_standard",
+      "filename": "termination_notice.txt",
+      "text": "解除劳动合同通知书\n王某：\n因严重违反公司规章制度，公司决定于2026年4月10日与您解除劳动合同。\n北京中关村软件有限公司（盖章）",
+      "expected": {
+        "employee_name": "王某",
+        "employer_name": "北京中关村软件有限公司",
+        "termination_date": "2026-04-10",
+        "termination_reason": "严重违反公司规章制度"
+      },
+      "note": "姓名以「王某：」出现、单位无甲方前缀——规则层预期 miss，用于暴露真值召回边界。"
+    },
+    {
+      "id": "eval_03_contract_comma_salary",
+      "filename": "contract_qianhai.txt",
+      "text": "劳动合同书\n甲方（用人单位）：深圳前海科技有限公司\n乙方（劳动者）：张三\n合同期限自2021年1月1日起至2024年12月31日止。\n乙方月工资为人民币12,500元。",
+      "expected": {
+        "employee_name": "张三",
+        "employer_name": "深圳前海科技有限公司",
+        "start_date": "2021-01-01",
+        "monthly_salary": "12500元",
+        "contract_signed": "是（材料含书面合同）"
+      }
+    },
+    {
+      "id": "eval_04_contract_alt_salary_phrasing",
+      "filename": "contract_xihu.txt",
+      "text": "劳动合同\n甲方：杭州西湖广告有限公司\n乙方：赵六\n合同期限自2023年8月15日起至2026年8月14日止。\n每月薪资9,000元，按月发放。",
+      "expected": {
+        "employee_name": "赵六",
+        "employer_name": "杭州西湖广告有限公司",
+        "start_date": "2023-08-15",
+        "monthly_salary": "9000元",
+        "contract_signed": "是（材料含书面合同）"
+      },
+      "note": "「每月薪资」非「月工资」——规则层预期 miss 工资字段。"
+    },
+    {
+      "id": "eval_05_termination_alt_date_phrasing",
+      "filename": "termination_pudong.txt",
+      "text": "关于解除与刘某劳动关系的通知\n因连续旷工超过三日，单位决定自2026年2月1日起解除劳动合同。\n上海浦东物流有限公司",
+      "expected": {
+        "termination_date": "2026-02-01",
+        "termination_reason": "连续旷工超过三日"
+      },
+      "note": "「自…起解除」非「于…解除」——规则层预期 miss 解除日期。"
+    },
+    {
+      "id": "eval_06_chat_record_no_fields",
+      "filename": "wechat_chat.txt",
+      "text": "2026-03-08 员工：这个月工资怎么还没发？\n2026-03-08 经理：财务在走流程，下周一定发。",
+      "expected": {},
+      "note": "聊天记录无制式字段；抽取器应零产出（反幻觉：不得编造）。"
+    },
+    {
+      "id": "eval_07_client_statement_no_fields",
+      "filename": "client_statement.txt",
+      "text": "我叫孙某，2025年3月入职这家公司做销售，干了大半年，1月份突然被通知不用来了，工资也压着没结。",
+      "expected": {},
+      "note": "口语化第一人称陈述；无制式锚点，抽取器应零产出（不得从口语推断结构化字段）。"
+    },
+    {
+      "id": "eval_08_contract_missing_salary",
+      "filename": "contract_gaoxin.txt",
+      "text": "劳动合同\n甲方：成都高新医疗器械有限公司\n乙方：周某\n合同期限自2020年6月1日起至2023年5月31日止。\n工作内容：质检。",
+      "expected": {
+        "employee_name": "周某",
+        "employer_name": "成都高新医疗器械有限公司",
+        "start_date": "2020-06-01",
+        "contract_signed": "是（材料含书面合同）"
+      },
+      "note": "工资真值缺失；抽取器应不产出 monthly_salary（不得补全）。"
+    }
+  ]
+}
