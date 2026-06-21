@@ -102,6 +102,7 @@ CI（GitHub Actions，`.github/workflows/ci.yml`）：前端 typecheck+build+vit
 
 ## 文档
 
+- 🚀 [docs/RUNBOOK.md](./docs/RUNBOOK.md) — **本机完整运行步骤 + 真机验收清单 + 人工待办**（先看这个）
 - [PROJECT_STATUS.md](./PROJECT_STATUS.md) — 现状评估、风险、完成路线图（每次变更后更新）
 - [docs/architecture.md](./docs/architecture.md) — 架构图（数据流 + 分层 + 风控护栏）
 - [docs/FAQ.md](./docs/FAQ.md) — 复现排错（版本/镜像源/端口/上传/导出）

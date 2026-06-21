@@ -182,7 +182,7 @@ LawDesk Junior 是一个面向初级律师的**劳动争议案件材料整理与
 
 剩余 ~8% 全部为**需人工/外部条件**的收尾：① 截图与演示录屏（需在运行态操作采集，见 acceptance §F）；② 法条逐条官方核对（追踪表已就绪，待人工对照官方文本）；③ LLM 抽取质量评估（需 DeepSeek key + 含 LLM 层的标注集）。
 
-**已验证项**：① 单地址 http://localhost:8000 启动并托管前端 + API；② 全新「陈某」案 → 真实 PDF/txt 解析 → 工作流抽取 7 字段 → 律师确认 → 重启后端数据仍在（持久化 PASS）；③ 前端 41 + 后端 50 测试、构建、评估、语料校验全绿；④ **GitHub Actions CI 实跑成功**（Ubuntu / Python 3.12 / Node 20，双 job 绿——跨环境复现验证）：https://github.com/ycl-2004/Lawyer_Sup/actions/runs/27909754532
+**已验证项**：① 单地址 http://localhost:8000 启动并托管前端 + API；② 全新「陈某」案 → 真实 PDF/txt 解析 → 工作流抽取 7 字段 → 律师确认 → 重启后端数据仍在（持久化 PASS）；③ 前端 41 + 后端 50 测试、构建、评估、语料校验全绿；④ **GitHub Actions CI 实跑成功**（Ubuntu / Python 3.12 / Node 20，双 job 绿——跨环境复现验证）：https://github.com/ycl-2004/Lawyer_Sup/actions/runs/27909754532 ；⑤ **在线演示已部署并可访问**（GitHub Pages，演示案件 + 客户端红线在线可玩）：https://ycl-2004.github.io/Lawyer_Sup/ ；⑥ **本机全栈实测**（uvicorn :8000 单地址托管前端 + API，样例「林某」案上传→工作流→刷新持久化通过）。
 
 若只以「课程演示项目」为基准：约 97%。
 
@@ -192,6 +192,7 @@ LawDesk Junior 是一个面向初级律师的**劳动争议案件材料整理与
 
 | 日期 | 版本 | 变更 |
 |---|---|---|
+| 2026-06-21 | v6 | **在线演示部署 + 运行手册**：前端以演示模式部署到 GitHub Pages（https://ycl-2004.github.io/Lawyer_Sup/ ，已验证 HTTP 200）——`pages.yml` 用 `VITE_BASE=/Lawyer_Sup/` 构建、`index.html→404.html` 兜底深链、`deploy-pages` 发布；vite base + Router basename 自适应根/子路径；Dashboard 加「在线演示版」横幅（无后端时优雅降级）。新增 [RUNBOOK.md](./docs/RUNBOOK.md)（本机完整运行步骤 + 真机验收清单 + 人工待办）与可直接上传的样例材料 `docs/acceptance/sample_test_case.txt` |
 | 2026-06-21 | v5 | **Phase 3 完成 + Phase 4 文档**：后端测试 14→**50**（解析/计算边界、API 端到端隔离 DB、评估护栏、语料一致性）；前端测试 22→**41**（jsdom + 组件 + 复核门槛纯逻辑）；**抽取评估集**（8 案，召回84%/精确100%/编造0/引用有效100%，诚实记录）并据此修复 2 个抽取真实 bug（解除条款误判入职日期、contract_signed 非原文引用）；**法条语料一致性校验器** + 官方核对追踪表；**GitHub Actions CI**（前端 typecheck+build+vitest / 后端 pytest+评估+语料校验）；金额计算双实现同步新增「日期冲突/负值拒绝」；FastAPI lifespan 迁移；空文件解析明确报错；Git 仓库初始化。新增文档：architecture / FAQ / CHANGELOG / .env.example / LICENSE |
 | 2026-06-11 | v4 | **Phase 2 完成**：SQLite 持久化（14天TTL+自动续期+级联清理）；真实文件上传与解析（PDF/docx/txt+编码兜底+粘贴文本兜底）；规则抽取器（正则确定性抽取，离线可用）+ LLM 增强合并；DB 工作流管线（分类→抽取→时间线→请求项→计算→RAG→模板草稿→复核，全部落库）；前端实时案件模式（新建/上传/同步/确认审计）；后端静态托管单地址运行 + macOS/Windows 一键启动脚本。后端回归 19 项 + E2E（全新案件抽取 7 字段全对、TTL 清理）通过 |
 | 2026-06-11 | v3 | 初版评估（含 MVP-0/0.5/1 全部成果：工作台、双案件、计算服务、RAG、引用核对、预览抽屉、信息分层、7 项风险修复） |
